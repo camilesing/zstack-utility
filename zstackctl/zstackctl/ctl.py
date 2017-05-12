@@ -3964,12 +3964,22 @@ class ResetRabbitCmd(Command):
         rabbitmq_ip = ctl.read_property('CloudBus.serverIp.0')
         rabbitmq_user = ctl.read_property('CloudBus.rabbitmqUsername')
         rabbitmq_passwd = ctl.read_property('CloudBus.rabbitmqPassword')
-        shell("service rabbitmq-server stop; rpm -ev rabbitmq-server; rm -rf /var/lib/rabbitmq")
-        if args.yum is not None:
-            ctl.internal_run('install_rabbitmq', "--host=%s --rabbit-username=%s --rabbit-password=%s --yum=%s" % (rabbitmq_ip, rabbitmq_user, rabbitmq_passwd, args.yum))
-        else:
-            ctl.internal_run('install_rabbitmq', "--host=%s --rabbit-username=%s --rabbit-password=%s" % (rabbitmq_ip, rabbitmq_user, rabbitmq_passwd))
 
+        if shell("zstack-ctl stop") != 0:
+            error("Stop zstack failed")
+
+        if shell("service rabbitmq-server restart") != 0:
+            error("restart rabbitmq failed")
+
+        shell("rabbitmqctl add_user " + rabbitmq_user + rabbitmq_passwd)
+        shell("rabbitmqctl set_user_tags " + rabbitmq_user + " administrator")
+        shell("rabbitmqctl set_permissions -p / " + rabbitmq_user + "\".*\" \".*\" \".*\"")
+
+        if shell("service rabbitmq-server restart") != 0:
+            error("restart rabbitmq failed")
+
+        if shell("zstack-ctl start") != 0:
+            error("Stop zstack failed")
 
 class InstallRabbitCmd(Command):
     def __init__(self):
