@@ -4897,10 +4897,10 @@ class ChangeIpCmd(Command):
 
         # Reset RabbitMQ
         info("Starting reset rabbitmq...")
-        if args.yum is not None:
-            ret = shell_return("zstack-ctl reset_rabbitmq --yum=%s" % args.yum)
-        else:
-            ret = shell_return("zstack-ctl reset_rabbitmq")
+        # if args.yum is not None:
+        #     ret = shell_return("zstack-ctl reset_rabbitmq --yum=%s" % args.yum)
+        # else:
+        ret = shell_return("zstack-ctl reset_rabbitmq")
         if ret == 0:
             info("Reset rabbitMQ successfully")
             info("Change ip successfully")
