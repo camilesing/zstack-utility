@@ -3972,8 +3972,11 @@ class ResetRabbitCmd(Command):
             error("restart rabbitmq failed")
 
         shell("rabbitmqctl add_user " + rabbitmq_user + rabbitmq_passwd)
+        info("rabbitmqctl add_use success")
         shell("rabbitmqctl set_user_tags " + rabbitmq_user + " administrator")
+        info("rabbitmqctl set_user_tags success")
         shell("rabbitmqctl set_permissions -p / " + rabbitmq_user + "\".*\" \".*\" \".*\"")
+        info("rabbitmqctl set_permissions success")
 
         if shell("service rabbitmq-server restart") != 0:
             error("restart rabbitmq failed")
